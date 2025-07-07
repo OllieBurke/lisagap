@@ -1,0 +1,9 @@
+include README.md
+include LICENSE
+include pyproject.toml
+include gap_notebook.ipynb
+recursive-include lisa_gap *.py
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude .git*
+global-exclude .DS_Store
