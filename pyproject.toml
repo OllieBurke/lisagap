@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lisa-gap"
+version = "0.2.0"
+description = "A tool for simulating planned and unplanned data gaps in LISA time series"
+authors = [
+    {name = "Ollie Burke", email = "ollie.burke@glasgow.ac.uk"}
+]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+keywords = ["lisa", "gravitational-waves", "data-gaps", "time-series"]
+dependencies = [
+    "numpy",
+    "scipy",
+    "h5py",
+    "lisaconstants",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "black",
+    "flake8",
+    "mypy",
+    "jupyter",
+    "matplotlib",
+]
+gpu = [
+    "cupy",
+]
+
+[project.urls]
+Homepage = "https://github.com/ollieburke/lisa-gap"
+Repository = "https://github.com/ollieburke/lisa-gap"
+Documentation = "https://github.com/ollieburke/lisa-gap"
+Issues = "https://github.com/ollieburke/lisa-gap/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["lisa_gap*"]
+
+[tool.setuptools.package-data]
+lisa_gap = ["py.typed"]
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
