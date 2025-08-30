@@ -20,7 +20,6 @@ def check_gpu_availability():
         import cupy as cp
         print("✓ CuPy is available")
         print(f"✓ GPU device: {cp.cuda.Device()}")
-        print(f"✓ GPU memory: {cp.cuda.MemoryInfo().total / 1e9:.1f} GB total")
         return True
     except ImportError:
         print("✗ CuPy not available - GPU acceleration disabled")
@@ -36,7 +35,7 @@ def create_test_configuration():
     A_YEAR = TROPICALYEAR_J2000DAY * 86400  # seconds in a year
     dt = 0.25  # seconds
     t_start = 0  # start time in seconds
-    t_obs = 0.1 * A_YEAR  # 0.1 years for faster testing
+    t_obs = 2.0 * A_YEAR  # 0.1 years for faster testing
     sim_t = t_start + np.arange(0, t_obs, dt)  # time array
     
     print(f"Simulation parameters:")
