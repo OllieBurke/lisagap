@@ -1,3 +1,5 @@
+pypi_token
+test_pypi_token
 # .h5
 *.h5
 # Byte-compiled / optimized / DLL files

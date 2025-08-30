@@ -45,7 +45,8 @@ def _to_device(array, xp):
 class GapMaskGenerator:
     """
     A class to generate and manage gap masks for time series data. Original code developed by 
-    Eleonora Castelli (NASA Goddard) and adapted by Ollie Burke (Glasgow).
+    Eleonora Castelli (NASA Goddard) and adapted, packaged and GPU accelerated 
+    by Ollie Burke (Glasgow).
     
     Supports both CPU (NumPy) and GPU (CuPy) computation.
     """
