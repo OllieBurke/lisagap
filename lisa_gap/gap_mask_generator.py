@@ -279,7 +279,12 @@ class GapMaskGenerator:
         if est_num_gaps > 0:
             # Use scipy for exponential distribution (requires numpy)
             np.random.seed(seed)
-            start_offsets = expon.rvs(scale=1 / rate, size=est_num_gaps).astype(int)
+            if self.use_gpu:
+                start_offsets = expon.rvs(scale=1 / rate.get(), size=est_num_gaps).astype(int)
+                gap_length = gap_length.get()
+            else:
+                start_offsets = expon.rvs(scale=1 / rate, size=est_num_gaps).astype(int)
+
             gap_starts_cpu = np.cumsum(start_offsets)
             gap_starts_cpu = gap_starts_cpu[gap_starts_cpu + gap_length < self.n_data]
             gap_ends_cpu = (gap_starts_cpu + gap_length).astype(int)
