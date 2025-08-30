@@ -109,6 +109,8 @@ gap_gen = GapMaskGenerator(
 
 ## Documentation
 
+Full documentation is available at [Read the Docs](https://lisa-gap.readthedocs.io/).
+
 ### Tutorial Notebook
 
 See the included **`gap_notebook.ipynb`** for a comprehensive tutorial that covers:
@@ -215,7 +217,7 @@ If you use this package in your research, please cite:
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please see our [Contributing Guide](https://lisa-gap.readthedocs.io/en/latest/contributing.html) for detailed information on how to contribute to the project.
 
 ## Support
 
