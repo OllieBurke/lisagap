@@ -30,6 +30,8 @@ dependencies = [
     "scipy",
     "h5py",
     "lisaconstants",
+    "pytest",
+    "pytest-cov",
 ]
 
 [project.optional-dependencies]
