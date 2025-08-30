@@ -1,0 +1,8 @@
+sphinx>=4.0
+sphinx-rtd-theme
+nbsphinx
+ipython
+numpy
+scipy
+h5py
+lisaconstants
