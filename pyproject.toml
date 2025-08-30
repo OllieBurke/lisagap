@@ -35,6 +35,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest",
+    "pylint",
     "pytest-cov",
     "black",
     "flake8",

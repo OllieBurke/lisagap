@@ -16,6 +16,7 @@ from lisaconstants import TROPICALYEAR_J2000DAY
 # Try to import CuPy for GPU support
 try:
     import cupy as cp
+
     CUPY_AVAILABLE = True
 except ImportError:
     cp = None
@@ -23,7 +24,8 @@ except ImportError:
 
 
 SECONDS_PER_YEAR = TROPICALYEAR_J2000DAY * 86400
-AN_HOUR = 60*60
+AN_HOUR = 60 * 60
+
 
 def _get_array_module(use_gpu: bool = False):
     """Get the appropriate array module (numpy or cupy) based on GPU availability and preference."""
@@ -31,25 +33,30 @@ def _get_array_module(use_gpu: bool = False):
         return cp
     return np
 
+
 def _to_numpy(array, xp):
     """Convert array to numpy array if it's a cupy array."""
-    if xp is cp and hasattr(array, 'get'):
+    if xp is cp and hasattr(array, "get"):
         return array.get()
     return array
 
+
 def _to_device(array, xp):
     """Convert array to the appropriate device (GPU or CPU)."""
-    if xp is cp and not hasattr(array, 'get'):
+    if xp is cp and not hasattr(array, "get"):
         return xp.asarray(array)
     return array
+
+
 class GapMaskGenerator:
     """
-    A class to generate and manage gap masks for time series data. Original code developed by 
-    Eleonora Castelli (NASA Goddard) and adapted, packaged and GPU accelerated 
+    A class to generate and manage gap masks for time series data. Original code developed by
+    Eleonora Castelli (NASA Goddard) and adapted, packaged and GPU accelerated
     by Ollie Burke (Glasgow).
-    
+
     Supports both CPU (NumPy) and GPU (CuPy) computation.
     """
+
     def __init__(
         self,
         sim_t: NDArray[np.float64],
@@ -81,19 +88,19 @@ class GapMaskGenerator:
             If True, use GPU acceleration with CuPy (requires CuPy to be installed).
             If False or CuPy is not available, use CPU with NumPy.
         """
-        
+
         # Initialize GPU/CPU support
         self.use_gpu = use_gpu and CUPY_AVAILABLE
         if use_gpu and not CUPY_AVAILABLE:
             print("Warning: CuPy not available. Falling back to CPU computation.")
-        
+
         self.xp = _get_array_module(self.use_gpu)
-        
+
         # Initialise sampling properties
         self.sim_t = _to_device(sim_t, self.xp)
         self.dt = dt
         self.n_data = len(sim_t)
-    
+
         # Determine whether or not mask uses nans or zeros
         self.treat_as_nan = treat_as_nan
 
@@ -101,10 +108,10 @@ class GapMaskGenerator:
         self.planseed = planseed
         self.unplanseed = unplanseed
 
-        # Read in gap definitions, rates, durations, types. 
+        # Read in gap definitions, rates, durations, types.
         self.gap_definitions = {}
 
-        # Quick and simple error checking 
+        # Quick and simple error checking
         for kind in ("planned", "unplanned"):
             if kind not in gap_definitions:
                 raise ValueError(f"Missing '{kind}' section in gap_definitions.")
@@ -113,9 +120,13 @@ class GapMaskGenerator:
 
             for name, entry in gap_definitions[kind].items():
                 if "rate_per_year" not in entry or "duration_hr" not in entry:
-                    raise ValueError(f"Gap '{name}' in '{kind}' must have 'rate_per_year' and 'duration_hr'.")
+                    raise ValueError(
+                        f"Gap '{name}' in '{kind}' must have 'rate_per_year' and 'duration_hr'."
+                    )
                 if entry["rate_per_year"] < 0 or entry["duration_hr"] < 0:
-                    raise ValueError(f"Gap '{name}' in '{kind}' has negative rate or duration.")
+                    raise ValueError(
+                        f"Gap '{name}' in '{kind}' has negative rate or duration."
+                    )
 
                 self.gap_definitions[kind][name] = {
                     "rate_per_year": entry["rate_per_year"],
@@ -135,19 +146,45 @@ class GapMaskGenerator:
         self.planned_labels = list(self.gap_definitions["planned"].keys())
         self.unplanned_labels = list(self.gap_definitions["unplanned"].keys())
 
-        self.planned_rates = self.xp.array(
-            [self.gap_definitions["planned"][k]["rate_per_year"] / SECONDS_PER_YEAR for k in self.planned_labels]
-        ) * self.dt
-        self.planned_durations = self.xp.array(
-            [self.gap_definitions["planned"][k]["duration_hr"] * 3600 for k in self.planned_labels]
-        ) / self.dt
+        self.planned_rates = (
+            self.xp.array(
+                [
+                    self.gap_definitions["planned"][k]["rate_per_year"]
+                    / SECONDS_PER_YEAR
+                    for k in self.planned_labels
+                ]
+            )
+            * self.dt
+        )
+        self.planned_durations = (
+            self.xp.array(
+                [
+                    self.gap_definitions["planned"][k]["duration_hr"] * 3600
+                    for k in self.planned_labels
+                ]
+            )
+            / self.dt
+        )
 
-        self.unplanned_rates = self.xp.array(
-            [self.gap_definitions["unplanned"][k]["rate_per_year"] / SECONDS_PER_YEAR for k in self.unplanned_labels]
-        ) * self.dt
-        self.unplanned_durations = self.xp.array(
-            [self.gap_definitions["unplanned"][k]["duration_hr"] * 3600 for k in self.unplanned_labels]
-        ) / self.dt
+        self.unplanned_rates = (
+            self.xp.array(
+                [
+                    self.gap_definitions["unplanned"][k]["rate_per_year"]
+                    / SECONDS_PER_YEAR
+                    for k in self.unplanned_labels
+                ]
+            )
+            * self.dt
+        )
+        self.unplanned_durations = (
+            self.xp.array(
+                [
+                    self.gap_definitions["unplanned"][k]["duration_hr"] * 3600
+                    for k in self.unplanned_labels
+                ]
+            )
+            / self.dt
+        )
 
     def construct_planned_gap_mask(
         self,
@@ -179,12 +216,14 @@ class GapMaskGenerator:
                 self.xp.random.seed(seed)
         else:
             np.random.seed(seed)
-            
+
         mask = self.xp.ones(self.n_data)
         est_num_gaps = int(self.n_data * rate)
 
         jitter = 0.2 * gap_length * (self.xp.random.rand(est_num_gaps) - 0.5)
-        gap_starts = (jitter + (1 / rate) * self.xp.arange(1, est_num_gaps + 1)).astype(int)
+        gap_starts = (jitter + (1 / rate) * self.xp.arange(1, est_num_gaps + 1)).astype(
+            int
+        )
         gap_ends = (gap_starts + gap_length).astype(int)
 
         # Decide whether or not to treat gaps as NaNs or 0s.
@@ -225,11 +264,11 @@ class GapMaskGenerator:
                 self.xp.random.seed(seed)
         else:
             np.random.seed(seed)
-            
+
         mask = self.xp.ones(self.n_data)
 
         est_num_gaps = int(self.n_data * rate)
-        
+
         # Handle small probability gaps - need to use numpy for scipy compatibility
         if est_num_gaps == 0:
             # Use numpy for random number generation with scipy
@@ -244,7 +283,7 @@ class GapMaskGenerator:
             gap_starts_cpu = np.cumsum(start_offsets)
             gap_starts_cpu = gap_starts_cpu[gap_starts_cpu + gap_length < self.n_data]
             gap_ends_cpu = (gap_starts_cpu + gap_length).astype(int)
-            
+
             # Convert to appropriate device
             gap_starts = _to_device(gap_starts_cpu, self.xp)
             gap_ends = _to_device(gap_ends_cpu, self.xp)
@@ -255,7 +294,9 @@ class GapMaskGenerator:
         # Decide whether or not to treat gaps as NaNs or 0s.
         gap_val = self._gap_value()
 
-        for start, end in zip(_to_numpy(gap_starts, self.xp), _to_numpy(gap_ends, self.xp)):
+        for start, end in zip(
+            _to_numpy(gap_starts, self.xp), _to_numpy(gap_ends, self.xp)
+        ):
             mask[start:end] = gap_val
 
         return mask
@@ -289,14 +330,14 @@ class GapMaskGenerator:
         """
         mask = self.xp.ones(self.n_data)
 
-        # Construct planned gap mask 
+        # Construct planned gap mask
         if include_planned:
             for rate, duration in zip(self.planned_rates, self.planned_durations):
                 mask *= self.construct_planned_gap_mask(
                     rate, duration, seed=self.planseed
                 )
 
-        # Construct unplanned gap mask 
+        # Construct unplanned gap mask
         if include_unplanned:
             for rate, duration in zip(self.unplanned_rates, self.unplanned_durations):
                 mask *= self.construct_unplanned_gap_mask(
@@ -305,7 +346,9 @@ class GapMaskGenerator:
 
         return mask
 
-    def save_to_hdf5(self, mask: np.ndarray, filename: str = "gap_mask_data.h5") -> None:
+    def save_to_hdf5(
+        self, mask: np.ndarray, filename: str = "gap_mask_data.h5"
+    ) -> None:
         """
         Save the gap mask and associated simulation metadata to an HDF5 file.
 
@@ -336,7 +379,7 @@ class GapMaskGenerator:
         # Convert to numpy for HDF5 compatibility
         mask_cpu = _to_numpy(mask, self.xp)
         sim_t_cpu = _to_numpy(self.sim_t, self.xp)
-        
+
         with h5py.File(filename, "w") as f:
             f.create_dataset("gap_mask", data=mask_cpu, compression="gzip")
             f.create_dataset("time_array", data=sim_t_cpu, compression="gzip")
@@ -348,17 +391,23 @@ class GapMaskGenerator:
             planned_grp = f.create_group("planned_gaps")
             for label in self.planned_labels:
                 grp = planned_grp.create_group(label)
-                grp.attrs["rate_events_per_year"] = self.gap_definitions["planned"][label]["rate_per_year"]
-                grp.attrs["duration_hours"] = self.gap_definitions["planned"][label]["duration_hr"]
+                grp.attrs["rate_events_per_year"] = self.gap_definitions["planned"][
+                    label
+                ]["rate_per_year"]
+                grp.attrs["duration_hours"] = self.gap_definitions["planned"][label][
+                    "duration_hr"
+                ]
 
             # Save unplanned gap info
             unplanned_grp = f.create_group("unplanned_gaps")
             for label in self.unplanned_labels:
                 grp = unplanned_grp.create_group(label)
-                grp.attrs["rate_events_per_year"] = self.gap_definitions["unplanned"][label]["rate_per_year"]
-                grp.attrs["duration_hours"] = self.gap_definitions["unplanned"][label]["duration_hr"]
-
-
+                grp.attrs["rate_events_per_year"] = self.gap_definitions["unplanned"][
+                    label
+                ]["rate_per_year"]
+                grp.attrs["duration_hours"] = self.gap_definitions["unplanned"][label][
+                    "duration_hr"
+                ]
 
     @classmethod
     def from_hdf5(cls, filename: str) -> "GapMaskGenerator":
@@ -380,13 +429,14 @@ class GapMaskGenerator:
         """
 
         with h5py.File(filename, "r") as f:
-            # Store simulation time, sampling interval, and mask type. 
+            # Store simulation time, sampling interval, and mask type.
             sim_t = f["time_array"][:]
             dt = float(f.attrs["dt"])
-            treat_as_nan = bool(f.attrs.get("treat_as_nan", True))  # fallback True if not saved
+            treat_as_nan = bool(
+                f.attrs.get("treat_as_nan", True)
+            )  # fallback True if not saved
 
-
-            # Store information about the planned gaps 
+            # Store information about the planned gaps
             planned_gaps = {}
             for key in f["planned_gaps"]:
                 grp = f["planned_gaps"][key]
@@ -406,19 +456,25 @@ class GapMaskGenerator:
 
             # Check if GPU support was used in saved file
             use_gpu = f.attrs.get("use_gpu", False)
-            
+
             gap_definitions = {
                 "planned": planned_gaps,
                 "unplanned": unplanned_gaps,
             }
             # Return as class object
-        return cls(sim_t=sim_t, dt=dt, gap_definitions=gap_definitions, treat_as_nan=treat_as_nan, use_gpu=use_gpu)
+        return cls(
+            sim_t=sim_t,
+            dt=dt,
+            gap_definitions=gap_definitions,
+            treat_as_nan=treat_as_nan,
+            use_gpu=use_gpu,
+        )
 
-    def summary(self, 
-                mask: NDArray[np.float64] = None,
-                export_json_path: Union[str, Path, None] = None) -> dict[str, Any]:
-                    
-
+    def summary(
+        self,
+        mask: NDArray[np.float64] = None,
+        export_json_path: Union[str, Path, None] = None,
+    ) -> dict[str, Any]:
         """
         Return a structured dictionary summarising the gap configuration
         and optionally the content of a specific mask.
@@ -471,7 +527,7 @@ class GapMaskGenerator:
         if mask is not None:
             # Convert to numpy for analysis
             mask_cpu = _to_numpy(mask, self.xp)
-            
+
             is_gap = np.isnan(mask_cpu) if self.treat_as_nan else (mask_cpu == 0)
             duty_cycle = 1.0 - np.sum(is_gap) / len(mask_cpu)
 
@@ -498,22 +554,20 @@ class GapMaskGenerator:
         }
 
         if export_json_path is not None:
-            with open(export_json_path, "w",encoding="utf-8") as f:
+            with open(export_json_path, "w", encoding="utf-8") as f:
                 json.dump(summary_dict, f, indent=4)
         return summary_dict
-
-
 
     def apply_smooth_taper_to_mask(
         self,
         mask: NDArray[np.float64],
-        taper_gap_definitions: Union[None, dict[str, dict[str, dict[str, Any]]]] = None
+        taper_gap_definitions: Union[None, dict[str, dict[str, dict[str, Any]]]] = None,
     ) -> NDArray[np.float64]:
         """
         Apply Tukey taper smoothing to an existing gap mask, using optional taper parameters.
-        This is a function that would probably be used in L2A and L2D, once processed via L01. 
+        This is a function that would probably be used in L2A and L2D, once processed via L01.
 
-        This function takes as input a mask and applies smooth tapers to the end of the gaps 
+        This function takes as input a mask and applies smooth tapers to the end of the gaps
 
         Parameters
         ----------
@@ -531,15 +585,15 @@ class GapMaskGenerator:
 
         # Make sure that the tapering function is consistent with the gap definitions
         self._validate_taper_definitions(taper_gap_definitions)
-        
+
         if taper_gap_definitions is None:
             return mask  # No tapering applied
 
         # Convert to CPU for processing since this involves complex indexing
         mask_cpu = _to_numpy(mask, self.xp)
         smoothed_mask = np.copy(mask_cpu)
-        
-        # If using nans, force to zero. 
+
+        # If using nans, force to zero.
         gap_indicator = np.isnan(mask_cpu) if self.treat_as_nan else (mask_cpu == 0)
 
         in_gap = False
@@ -573,12 +627,16 @@ class GapMaskGenerator:
                 alpha = 2 * lobe_samples / win_len
                 taper = 1 - tukey(win_len, alpha)
 
-                smoothed_mask[win_start:win_end] = np.minimum(smoothed_mask[win_start:win_end], taper)
+                smoothed_mask[win_start:win_end] = np.minimum(
+                    smoothed_mask[win_start:win_end], taper
+                )
 
         # Convert back to appropriate device
         return _to_device(smoothed_mask, self.xp)
 
-    def build_quality_flags(self, data_array: NDArray[np.float64]) -> NDArray[np.float64]:
+    def build_quality_flags(
+        self, data_array: NDArray[np.float64]
+    ) -> NDArray[np.float64]:
         """
         Build a masking function based on the gap definitions and the provided data array.
 
@@ -594,15 +652,17 @@ class GapMaskGenerator:
         """
         # Convert to CPU for this simple operation
         data_cpu = _to_numpy(data_array, self.xp)
-        
-        # Wherever nans appear, replace this with 1.0. 
-        # Else 0.0 for valid data product. 
+
+        # Wherever nans appear, replace this with 1.0.
+        # Else 0.0 for valid data product.
         mask_cpu = np.where(np.isnan(data_cpu), 1.0, 0.0)
 
         # Convert back to appropriate device
         return _to_device(mask_cpu, self.xp)
 
-    def _match_gap_length_to_label(self, gap_length_samples: int) -> Union[tuple[str, str], None]:
+    def _match_gap_length_to_label(
+        self, gap_length_samples: int
+    ) -> Union[tuple[str, str], None]:
         """
         Match a gap length to one of the known planned/unplanned definitions.
 
@@ -617,12 +677,18 @@ class GapMaskGenerator:
         """
         for kind in ("planned", "unplanned"):
             for label in self.gap_definitions[kind]:
-                expected = int(self.gap_definitions[kind][label]["duration_hr"] * 3600 / self.dt)
-                if abs(gap_length_samples - expected) < 0.1 * expected:  # allow 10% fuzz
+                expected = int(
+                    self.gap_definitions[kind][label]["duration_hr"] * 3600 / self.dt
+                )
+                if (
+                    abs(gap_length_samples - expected) < 0.1 * expected
+                ):  # allow 10% fuzz
                     return (kind, label)
         return None
 
-    def _validate_taper_definitions(self, taper_gap_definitions: dict[str, dict[str, dict[str, Any]]]) -> None:
+    def _validate_taper_definitions(
+        self, taper_gap_definitions: dict[str, dict[str, dict[str, Any]]]
+    ) -> None:
         """
         Validate the structure and contents of taper_gap_definitions.
 
@@ -636,18 +702,28 @@ class GapMaskGenerator:
 
         for kind in taper_gap_definitions:
             if kind not in ("planned", "unplanned"):
-                raise ValueError(f"Invalid gap kind '{kind}'. Must be 'planned' or 'unplanned'.")
+                raise ValueError(
+                    f"Invalid gap kind '{kind}'. Must be 'planned' or 'unplanned'."
+                )
 
             if kind not in self.gap_definitions:
                 raise ValueError(f"'{kind}' gap kind not found in gap_definitions.")
 
             for label, entry in taper_gap_definitions[kind].items():
                 if label not in self.gap_definitions[kind]:
-                    raise ValueError(f"Gap label '{label}' not found in gap_definitions[{kind}].")
+                    raise ValueError(
+                        f"Gap label '{label}' not found in gap_definitions[{kind}]."
+                    )
 
                 if not isinstance(entry, Mapping) or "lobe_lengths_hr" not in entry:
-                    raise ValueError(f"Missing or invalid 'lobe_lengths_hr' for '{label}' in '{kind}'.")
+                    raise ValueError(
+                        f"Missing or invalid 'lobe_lengths_hr' for '{label}' in '{kind}'."
+                    )
 
-                if not isinstance(entry["lobe_lengths_hr"], (int, float)) or entry["lobe_lengths_hr"] < 0:
-                    raise ValueError(f"'lobe_lengths_hr' must be a non-negative number for '{label}'.")
-
+                if (
+                    not isinstance(entry["lobe_lengths_hr"], (int, float))
+                    or entry["lobe_lengths_hr"] < 0
+                ):
+                    raise ValueError(
+                        f"'lobe_lengths_hr' must be a non-negative number for '{label}'."
+                    )
