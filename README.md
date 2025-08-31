@@ -12,10 +12,20 @@ Original masking code developed by Eleonora Castelli (NASA Goddard). The code wa
 
 ## Installation
 
-### From PyPI (recommended)
+### First set up a virtual environment (recommended)
+```bash
+python -m venv gap_env
+source gap_env/bin/activate  # On Windows use `venv\Scripts\activate`
+```
 
+Then feel free to pip install (coming soon to real index)
 ```bash
 pip install lisa-gap
+```
+Available on [Test PyPI](https://test.pypi.org/project/lisa-gap/)
+
+```bash
+pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple lisa-gap==0.3.4b0
 ```
 
 ### With GPU support (optional)
@@ -44,6 +54,11 @@ git clone https://github.com/ollieburke/lisa-gap.git
 cd lisa-gap
 pip install -e ".[dev]"
 ```
+
+### Verify installation with tests
+
+```bash
+pytest 
 
 ## Quick Start
 
