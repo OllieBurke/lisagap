@@ -1,6 +1,6 @@
 # lisa-gap
 
-A Python package for simulating planned and unplanned data gaps in LISA time series data.
+A Python package for simulating planned and unplanned data gaps in LISA time series data. Full documentation available at [Read The Docs](https://lisagap.readthedocs.io/en/latest/). Our package is currently available on test.pypi [here](https://test.pypi.org/project/lisa-gap/).
 
 ## Description
 
@@ -8,7 +8,7 @@ A Python package for simulating planned and unplanned data gaps in LISA time ser
 
 The package includes advanced features for smooth tapering around gap edges using customizable Tukey windows, which is particularly useful for frequency domain analysis where sharp discontinuities can introduce spectral artifacts.
 
-Original code developed by Eleonora Castelli (NASA Goddard) and adapted by Ollie Burke (University of Glasgow).
+Original masking code developed by Eleonora Castelli (NASA Goddard). The code was then adapted, packaged and GPU accelerated by Ollie Burke (University of Glasgow).
 
 ## Installation
 
@@ -27,9 +27,6 @@ pip install lisa-gap[cuda11x]
 
 # For CUDA 12.x (Linux x86_64 only)  
 pip install lisa-gap[cuda12x]
-
-# Auto-detect CUDA version (may require compilation)
-pip install lisa-gap[gpu]
 ```
 
 ### From source
@@ -45,7 +42,7 @@ pip install .
 ```bash
 git clone https://github.com/ollieburke/lisa-gap.git
 cd lisa-gap
-pip install -e .[dev]
+pip install -e ".[dev]"
 ```
 
 ## Quick Start
@@ -113,7 +110,7 @@ Full documentation is available at [Read the Docs](https://lisa-gap.readthedocs.
 
 ### Tutorial Notebook
 
-See the included **`gap_notebook.ipynb`** for a comprehensive tutorial that covers:
+See the included **`docs/source/gap_notebook.ipynb`** for a comprehensive tutorial that covers:
 
 - Setting up realistic gap configurations for LISA
 - Generating gap masks with planned and unplanned gaps
