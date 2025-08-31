@@ -106,7 +106,7 @@ gap_gen = GapMaskGenerator(
 
 ## Documentation
 
-Full documentation is available at [Read the Docs](https://lisa-gap.readthedocs.io/).
+Full documentation is available at [Read the Docs](https://lisagap.readthedocs.io/).
 
 ### Tutorial Notebook
 
@@ -114,14 +114,11 @@ See the included **`docs/source/gap_notebook.ipynb`** for a comprehensive tutori
 
 - Setting up realistic gap configurations for LISA
 - Generating gap masks with planned and unplanned gaps
-- Saving and loading gap configurations to/from HDF5 files
+- Saving and loading gap configurations to/from HDF5 files. Gap metadata can be saved to .json files
 - **Customizable smooth tapering** for frequency domain analysis
 - Quality flag generation and gap analysis
 
-The tutorial demonstrates real-world usage patterns and provides examples for different LISA data processing levels (L01, L2A, L2D).
-
-### Key Features Highlighted
-
+The tutorial notebook can be viewed within the documentation [here]
 **Flexible Taper Control**: Users have complete freedom to choose their own tapering strategy for each gap type:
 
 ```python
@@ -170,14 +167,13 @@ This flexibility allows users to optimize tapering strategies for different gap 
 - Generate realistic gap patterns for LISA time series
 - Support for both planned and unplanned gaps
 - Configurable gap rates and durations
-- Statistical distributions for gap timing
 - **Flexible smooth tapering with user-defined Tukey windows per gap type**
 - **Complete freedom to customize taper lengths for different gap categories**
 - **GPU acceleration support with CuPy for large datasets**
 - **CPU/GPU agnostic operation with automatic fallback**
 - Save/load gap configurations to/from HDF5 files
 - Quality flag generation and gap analysis tools
-- Easy integration with existing LISA data analysis pipelines
+- Comprehensive documentation
 
 ## Requirements
 
@@ -185,14 +181,12 @@ This flexibility allows users to optimize tapering strategies for different gap 
 - numpy
 - scipy
 - h5py
-- lisaconstants
 
 ### Optional dependencies
 
 **For GPU acceleration (Linux x86_64 only), choose one of:**
-- **CUDA 12.x**: `pip install lisa-gap[cuda12x]` (includes cupy-cuda12x and fastemriwaveforms-cuda12x)
-- **CUDA 11.x**: `pip install lisa-gap[cuda11x]` (includes cupy-cuda11x and fastemriwaveforms-cuda11x)
-- **Auto-detect**: `pip install lisa-gap[gpu]` (generic cupy, may require compilation)
+- **CUDA 12.x**: `pip install lisa-gap[cuda12x]` 
+- **CUDA 11.x**: `pip install lisa-gap[cuda11x]` 
 
 ## License
 
@@ -214,7 +208,7 @@ If you use this package in your research, please cite:
 
 ## Contributing
 
-Contributions are welcome! Please see our [Contributing Guide](https://lisa-gap.readthedocs.io/en/latest/contributing.html) for detailed information on how to contribute to the project.
+Contributions are welcome! Please see our [Contributing Guide](https://lisagap.readthedocs.io/en/latest/contributing.html) for detailed information on how to contribute to the project.
 
 ## Support
 
