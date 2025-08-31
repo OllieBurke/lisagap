@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lisa-gap"
-version = "0.3.0"
+version = "0.3.3"
 description = "A tool for simulating planned and unplanned data gaps in LISA time series"
 authors = [
     {name = "Ollie Burke", email = "ollie.burke@glasgow.ac.uk"}
@@ -29,10 +29,8 @@ dependencies = [
     "numpy",
     "scipy",
     "h5py",
-    "lisaconstants",
-    "pytest",
-    "pytest-cov",
 ]
+
 
 [project.optional-dependencies]
 dev = [
@@ -44,6 +42,8 @@ dev = [
     "mypy",
     "jupyter",
     "matplotlib",
+    "build",
+    "twine",
 ]
 docs = [
     "sphinx>=4.0",
@@ -59,10 +59,10 @@ cuda12x = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ollieburke/lisa-gap"
-Repository = "https://github.com/ollieburke/lisa-gap"
-Documentation = "https://lisa-gap.readthedocs.io"
-Issues = "https://github.com/ollieburke/lisa-gap/issues"
+Homepage = "https://github.com/ollieburke/lisagap"
+Repository = "https://github.com/ollieburke/lisagap"
+Documentation = "https://lisagap.readthedocs.io"
+Issues = "https://github.com/ollieburke/lisagap/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
