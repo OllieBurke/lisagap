@@ -23,7 +23,6 @@ Features
 * Flexible smooth tapering with freedom to choose lobe lengths in units of time. 
 * CPU/GPU agnostic operation with automatic fallback
 * Save/load gap configurations to/from HDF5 files
-* Easy integration with existing LISA data analysis pipelines
 
 .. toctree::
    :maxdepth: 2
