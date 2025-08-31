@@ -1,6 +1,6 @@
 # lisa-gap
 
-A Python package for simulating planned and unplanned data gaps in LISA time series data. Full documentation available at [Read The Docs](https://lisagap.readthedocs.io/en/latest/). Our package is currently available on test.pypi [here](https://test.pypi.org/project/lisa-gap/).
+A Python package for simulating planned and unplanned data gaps in LISA time series data. Our package is currently available on test.pypi [here](https://test.pypi.org/project/lisa-gap/).
 
 ## Description
 
