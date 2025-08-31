@@ -8,7 +8,7 @@ BibTeX Entry
 
 .. code-block:: bibtex
 
-   @software{lisa_gap,
+   @software{lisagap,
      author = {Burke, Ollie and Castelli, Eleonora},
      title = {lisa-gap: A tool for simulating data gaps in LISA time series},
      url = {https://github.com/ollieburke/lisa-gap},

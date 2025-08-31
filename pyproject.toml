@@ -66,10 +66,10 @@ Issues = "https://github.com/ollieburke/lisagap/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["lisa_gap*"]
+include = ["lisagap*"]
 
 [tool.setuptools.package-data]
-lisa_gap = ["py.typed"]
+lisagap = ["py.typed"]
 
 [tool.black]
 line-length = 88

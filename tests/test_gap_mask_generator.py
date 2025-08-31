@@ -1,8 +1,8 @@
-"""Tests for lisa_gap package."""
+"""Tests for lisagap package."""
 
 import numpy as np
 import pytest
-from lisa_gap import GapMaskGenerator
+from lisagap import GapMaskGenerator
 
 
 class TestGapMaskGenerator:

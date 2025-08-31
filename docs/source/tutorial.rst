@@ -23,7 +23,7 @@ Here's a minimal example to get you started:
 .. code-block:: python
 
    import numpy as np
-   from lisa_gap import GapMaskGenerator
+   from lisagap import GapMaskGenerator
    from lisaconstants import TROPICALYEAR_J2000DAY
 
    # Set up simulation properties

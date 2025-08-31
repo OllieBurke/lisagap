@@ -11,7 +11,7 @@ Based on gap_notebook.ipynb tutorial.
 
 import time
 import numpy as np
-from lisa_gap import GapMaskGenerator
+from lisagap import GapMaskGenerator
 from lisaconstants import TROPICALYEAR_J2000DAY
 
 def check_gpu_availability():

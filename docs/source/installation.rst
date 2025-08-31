@@ -65,14 +65,14 @@ To verify your installation, run:
 
 .. code-block:: python
 
-   import lisa_gap
-   print(lisa_gap.__version__)
+   import lisagap
+   print(lisagap.__version__)
 
 To test GPU functionality (if installed):
 
 .. code-block:: python
 
-   from lisa_gap import GapMaskGenerator
+   from lisagap import GapMaskGenerator
    import numpy as np
    
    # Quick test

@@ -48,7 +48,7 @@ pip install -e ".[dev]"
 ## Quick Start
 
 ```python
-from lisa_gap import GapMaskGenerator
+from lisagap import GapMaskGenerator
 import numpy as np
 
 # Create time array
@@ -122,7 +122,7 @@ The tutorial notebook can be viewed within the documentation [here]
 **Flexible Taper Control**: Users have complete freedom to choose their own tapering strategy for each gap type:
 
 ```python
-from lisa_gap import GapMaskGenerator
+from lisagap import GapMaskGenerator
 import numpy as np
 
 # Set up gap configuration
@@ -197,7 +197,7 @@ MIT License
 If you use this package in your research, please cite:
 
 ```bibtex
-@software{lisa_gap,
+@software{lisagap,
   author = {Burke, Ollie and Castelli, Eleonora},
   title = {lisa-gap: A tool for simulating data gaps in LISA time series},
   url = {https://github.com/ollieburke/lisa-gap},
