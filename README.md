@@ -25,7 +25,7 @@ pip install lisa-gap
 Available on [Test PyPI](https://test.pypi.org/project/lisa-gap/)
 
 ```bash
-pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple lisa-gap==0.3.4b0
+pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple lisa-gap==0.3.4
 ```
 
 ### With GPU support (optional)
