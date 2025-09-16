@@ -50,12 +50,6 @@ docs = [
     "nbsphinx",
     "ipython",
 ]
-cuda11x = [
-    "cupy-cuda11x>=12.0.0; platform_system=='Linux' and platform_machine=='x86_64'",
-]
-cuda12x = [
-    "cupy-cuda12x>=12.0.0; platform_system=='Linux' and platform_machine=='x86_64'",
-]
 
 [project.urls]
 Homepage = "https://github.com/ollieburke/lisagap"
@@ -88,3 +82,10 @@ disallow_untyped_defs = true
 
 [tool.uv.sources]
 lisaglitch = { git = "https://gitlab.in2p3.fr/lisa-simulation/glitch.git", branch = "69-incorporate-gaps" }
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.30.1",
+    "jupyter>=1.1.1",
+    "pytest>=8.4.2",
+]
