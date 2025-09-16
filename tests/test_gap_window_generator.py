@@ -181,6 +181,78 @@ class TestGapWindowGenerator:
         original_summary = gap_mask_generator.summary()
         assert summary == original_summary
 
+    def test_proportional_tapering_static_method(self):
+        """Test the static proportional tapering method."""
+        # Create test mask with different gap types
+        mask = np.ones(1000)
+        mask[100:150] = 0        # Short gap: 50 samples
+        mask[300:600] = np.nan   # Medium gap: 300 samples  
+        mask[800:950] = 0        # Medium gap: 150 samples
+        
+        # Apply proportional tapering
+        tapered = GapWindowGenerator.apply_proportional_tapering(
+            mask, 
+            dt=1.0,
+            short_taper_fraction=0.25,
+            medium_taper_fraction=0.05
+        )
+        
+        # Basic checks
+        assert tapered is not None
+        assert len(tapered) == len(mask)
+        assert isinstance(tapered, np.ndarray)
+        
+        # Check that tapering was applied (should have values between 0 and 1)
+        unique_values = np.unique(tapered[~np.isnan(tapered)])
+        has_intermediate_values = np.any((unique_values > 0) & (unique_values < 1))
+        assert has_intermediate_values, "Tapering should create intermediate values"
+        
+        # Check range
+        assert np.nanmin(tapered) >= 0.0
+        assert np.nanmax(tapered) <= 1.0
+
+    def test_proportional_tapering_edge_cases(self):
+        """Test edge cases for proportional tapering."""
+        # Test with very short gaps (should be skipped)
+        mask = np.ones(100)
+        mask[10:12] = 0  # 2-point gap (less than min_gap_points=5)
+        
+        tapered = GapWindowGenerator.apply_proportional_tapering(
+            mask, dt=1.0, min_gap_points=5
+        )
+        
+        # Should be unchanged since gap is too short
+        np.testing.assert_array_equal(tapered, mask)
+        
+        # Test with empty mask (no gaps)
+        mask_no_gaps = np.ones(100)
+        tapered_no_gaps = GapWindowGenerator.apply_proportional_tapering(
+            mask_no_gaps, dt=1.0
+        )
+        
+        # Should be unchanged
+        np.testing.assert_array_equal(tapered_no_gaps, mask_no_gaps)
+
+    def test_proportional_tapering_parameters(self):
+        """Test proportional tapering with different parameters."""
+        mask = np.ones(500)
+        mask[100:200] = 0  # 100-sample gap
+        
+        # Test with different taper fractions
+        tapered1 = GapWindowGenerator.apply_proportional_tapering(
+            mask, dt=1.0, short_taper_fraction=0.1
+        )
+        
+        tapered2 = GapWindowGenerator.apply_proportional_tapering(
+            mask, dt=1.0, short_taper_fraction=0.3
+        )
+        
+        # More aggressive tapering should create more intermediate values
+        n_intermediate1 = np.sum((tapered1 > 0) & (tapered1 < 1))
+        n_intermediate2 = np.sum((tapered2 > 0) & (tapered2 < 1))
+        
+        assert n_intermediate2 > n_intermediate1, "Higher taper fraction should create more intermediate values"
+
 
 @pytest.mark.skipif(not DEPENDENCIES_AVAILABLE, reason="Required dependencies not available")
 class TestGapMaskGeneratorImport:

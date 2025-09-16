@@ -332,6 +332,151 @@ class GapWindowGenerator:
         """Get unplanned gap durations.""" 
         return self.gap_mask_generator.unplanned_durations
     
+    @staticmethod
+    def apply_proportional_tapering(
+        mask_data: NDArray,
+        dt: float = 1.0,
+        short_taper_fraction: float = 0.25,
+        medium_taper_fraction: float = 0.05,
+        long_taper_fraction: float = 0.05,
+        min_gap_points: int = 5,
+        short_gap_threshold_minutes: float = 10.0,
+        long_gap_threshold_hours: float = 10.0
+    ) -> NDArray:
+        """
+        Apply proportional tapering to gaps in a mask loaded from .npy array.
+        
+        This method automatically detects gaps in the input mask and applies
+        Tukey window tapering proportional to the gap duration. Different
+        taper fractions are applied based on gap length categories.
+        
+        Parameters
+        ----------
+        mask_data : np.ndarray
+            Input mask data from .npy file. Can contain NaN or 0 for gaps.
+        dt : float
+            Time step in seconds between samples.
+        short_taper_fraction : float, optional
+            Fraction of gap duration to taper on each side for short gaps.
+            Default is 0.25 (25% each side = 50% total taper).
+        medium_taper_fraction : float, optional
+            Fraction of gap duration to taper on each side for medium gaps.
+            Default is 0.05 (5% each side = 10% total taper).
+        long_taper_fraction : float, optional
+            Fraction of gap duration to taper on each side for long gaps.
+            Default is 0.05 (5% each side = 10% total taper).
+        min_gap_points : int, optional
+            Minimum number of consecutive gap points to apply tapering.
+            Gaps shorter than this are left unchanged. Default is 5.
+        short_gap_threshold_minutes : float, optional
+            Threshold in minutes to distinguish short from medium gaps.
+            Default is 10.0 minutes.
+        long_gap_threshold_hours : float, optional
+            Threshold in hours to distinguish medium from long gaps.
+            Default is 10.0 hours.
+            
+        Returns
+        -------
+        np.ndarray
+            Tapered mask with smooth transitions around gap edges.
+            
+        Examples
+        --------
+        >>> # Load mask from .npy file
+        >>> mask = np.load('gap_mask.npy')
+        >>> 
+        >>> # Apply proportional tapering
+        >>> tapered_mask = GapWindowGenerator.apply_proportional_tapering(
+        ...     mask, dt=1.0
+        ... )
+        >>> 
+        >>> # Custom tapering for different gap categories
+        >>> tapered_mask = GapWindowGenerator.apply_proportional_tapering(
+        ...     mask, 
+        ...     dt=0.25,
+        ...     short_taper_fraction=0.3,   # 30% each side for short gaps
+        ...     medium_taper_fraction=0.1,  # 10% each side for medium gaps
+        ...     long_taper_fraction=0.02    # 2% each side for long gaps
+        ... )
+        """
+        # Convert thresholds to samples
+        short_threshold_samples = int(short_gap_threshold_minutes * 60 / dt)
+        long_threshold_samples = int(long_gap_threshold_hours * 3600 / dt)
+        
+        # Work with a copy to avoid modifying the original
+        tapered_mask = mask_data.copy().astype(float)
+        
+        # Detect gaps (both NaN and zero values)
+        is_nan_gap = np.isnan(mask_data)
+        # Replace any NaN values with zeros
+        tapered_mask[is_nan_gap] = 0.0
+        
+        is_zero_gap = (mask_data == 0.0)
+        gap_mask = is_zero_gap | is_nan_gap  # Include BOTH zero and NaN gaps
+        
+        
+        # Find gap segments
+        gap_diff = np.diff(np.concatenate(([False], gap_mask, [False])).astype(int))
+        gap_starts = np.where(gap_diff == 1)[0]
+        gap_ends = np.where(gap_diff == -1)[0]
+        
+        
+        for i, (start, end) in enumerate(zip(gap_starts, gap_ends)):
+            gap_length = end - start
+            gap_duration_minutes = gap_length * dt / 60
+            
+            # Skip very short gaps
+            if gap_length < min_gap_points:
+                continue
+            
+            # Categorize gap and select taper fraction
+            if gap_length < short_threshold_samples:
+                # Short gap
+                taper_fraction = short_taper_fraction
+                category = "short"
+            elif gap_length < long_threshold_samples:
+                # Medium gap
+                taper_fraction = medium_taper_fraction  
+                category = "medium"
+            else:
+                # Long gap
+                taper_fraction = long_taper_fraction
+                category = "long"
+            
+            # Calculate taper window parameters
+            taper_samples = int(taper_fraction * gap_length)
+            
+            # Ensure we have enough samples for tapering
+            if taper_samples < 1:
+                taper_samples = 1
+            elif 2 * taper_samples >= gap_length:
+                # If taper would overlap, use maximum possible
+                taper_samples = gap_length // 2
+            
+            # Create extended window including taper regions
+            win_start = max(0, start - taper_samples)
+            win_end = min(len(mask_data), end + taper_samples)
+            window_length = win_end - win_start
+            
+            if window_length < 3:
+                continue
+            
+            # Calculate alpha for Tukey window
+            # Alpha = fraction of window that is tapered
+            alpha = 2 * taper_samples / window_length
+            alpha = min(alpha, 1.0)  # Ensure alpha <= 1
+            
+            # Generate Tukey window (1 - tukey gives us the gap shape)
+            taper_window = 1 - tukey(window_length, alpha)
+            
+            # Apply tapering
+            tapered_mask[win_start:win_end] = np.minimum(
+                tapered_mask[win_start:win_end], 
+                taper_window
+            )
+     
+        return tapered_mask
+    
     # Delegate other methods to the underlying gap_mask_generator
     def __getattr__(self, name):
         """Delegate unknown attributes to the underlying GapMaskGenerator."""
