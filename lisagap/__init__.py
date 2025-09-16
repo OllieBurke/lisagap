@@ -1,10 +1,19 @@
-from .gap_mask_generator import GapMaskGenerator
+from .gap_window_generator import GapWindowGenerator
+
+# Import GapMaskGenerator from lisaglitch
+try:
+    from lisaglitch import GapMaskGenerator
+except ImportError:
+    raise ImportError(
+        "lisaglitch is required but not installed. "
+        "Please install it with: pip install lisaglitch"
+    )
 
 from importlib.metadata import version
 
 __version__ = version("lisa-gap")
 __author__ = "Ollie Burke -- ollie.burke@glasgow.ac.uk"
-__all__ = ["GapMaskGenerator"]
+__all__ = ["GapWindowGenerator", "GapMaskGenerator"]
 
 __citation__ = (
     "\n@software{lisagap,"
