@@ -1622,7 +1622,7 @@ wheels = [
 
 [[package]]
 name = "lisa-gap"
-version = "0.3.5"
+version = "0.4.0"
 source = { editable = "." }
 dependencies = [
     { name = "h5py" },
@@ -1647,6 +1647,14 @@ dev = [
     { name = "pytest-cov" },
     { name = "twine" },
 ]
+
+[package.dev-dependencies]
+dev = [
+    { name = "ipykernel" },
+    { name = "jupyter" },
+    { name = "pytest" },
+    { name = "twine" },
+]
 docs = [
     { name = "ipython", version = "8.37.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "ipython", version = "9.5.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -1655,42 +1663,38 @@ docs = [
     { name = "sphinx-rtd-theme" },
 ]
 
-[package.dev-dependencies]
-dev = [
-    { name = "ipykernel" },
-    { name = "jupyter" },
-    { name = "pytest" },
-]
-
 [package.metadata]
 requires-dist = [
     { name = "black", marker = "extra == 'dev'" },
     { name = "build", marker = "extra == 'dev'" },
     { name = "flake8", marker = "extra == 'dev'" },
     { name = "h5py" },
-    { name = "ipython", marker = "extra == 'docs'" },
     { name = "jupyter", marker = "extra == 'dev'" },
     { name = "lisaconstants" },
     { name = "lisaglitch", git = "https://gitlab.in2p3.fr/lisa-simulation/glitch.git?branch=69-incorporate-gaps" },
     { name = "matplotlib", marker = "extra == 'dev'" },
     { name = "mypy", marker = "extra == 'dev'" },
-    { name = "nbsphinx", marker = "extra == 'docs'" },
     { name = "numpy" },
     { name = "pylint", marker = "extra == 'dev'" },
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "pytest-cov", marker = "extra == 'dev'" },
     { name = "scipy" },
-    { name = "sphinx", marker = "extra == 'docs'", specifier = ">=4.0" },
-    { name = "sphinx-rtd-theme", marker = "extra == 'docs'" },
     { name = "twine", marker = "extra == 'dev'" },
 ]
-provides-extras = ["dev", "docs"]
+provides-extras = ["dev"]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "ipykernel", specifier = ">=6.30.1" },
     { name = "jupyter", specifier = ">=1.1.1" },
     { name = "pytest", specifier = ">=8.4.2" },
+    { name = "twine", specifier = ">=6.2.0" },
+]
+docs = [
+    { name = "ipython" },
+    { name = "nbsphinx" },
+    { name = "sphinx", specifier = ">=4.0" },
+    { name = "sphinx-rtd-theme" },
 ]
 
 [[package]]
