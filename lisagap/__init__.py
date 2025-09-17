@@ -1,4 +1,5 @@
 from .gap_window_generator import GapWindowGenerator
+from .gap_segment_generator import DataSegmentGenerator
 
 # Import GapMaskGenerator from lisaglitch
 try:
@@ -13,7 +14,7 @@ from importlib.metadata import version
 
 __version__ = version("lisa-gap")
 __author__ = "Ollie Burke -- ollie.burke@glasgow.ac.uk"
-__all__ = ["GapWindowGenerator", "GapMaskGenerator"]
+__all__ = ["GapWindowGenerator", "DataSegmentGenerator", "GapMaskGenerator"]
 
 __citation__ = (
     "\n@software{lisagap,"
