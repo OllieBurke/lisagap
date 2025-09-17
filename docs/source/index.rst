@@ -7,11 +7,11 @@ The package provides tools for generating realistic gap masks that can be applie
 It supports both planned gaps (e.g., scheduled maintenance) and unplanned gaps (e.g., hardware failures) 
 with configurable statistical distributions.
 
-The package includes advanced features for smooth tapering around gap edges using customizable Tukey windows, 
-which is particularly useful for frequency domain analysis where sharp discontinuities can introduce spectral artifacts.
+Built on top of `lisaglitch <https://github.com/LISA-Consortium/lisaglitch>`_, lisa-gap adds advanced 
+windowing, proportional tapering, and data segmentation capabilities for frequency domain analysis.
 
 .. note::
-   Original code developed by Eleonora Castelli (NASA Goddard) and adapted, packaged and GPU accelerated 
+   Original code developed by Eleonora Castelli (NASA Goddard) and adapted, packaged and enhanced 
    by Ollie Burke (University of Glasgow).
 
 Features
@@ -20,9 +20,19 @@ Features
 * Generate realistic gap patterns for LISA time series
 * Support for both planned and unplanned gaps  
 * Configurable gap rates and durations
-* Flexible smooth tapering with freedom to choose lobe lengths in units of time. 
-* CPU/GPU agnostic operation with automatic fallback
+* **Proportional tapering** with automatic gap categorization
+* **Extended lobe tapering** for ultra-smooth transitions
+* **Data segmentation** with edge tapering for spectral analysis
+* **Advanced windowing** with boundary artifact prevention
+* Built on proven `lisaglitch` foundation
 * Save/load gap configurations to/from HDF5 files
+
+Core Classes
+------------
+
+* **GapMaskGenerator** - Generate gap masks from statistical definitions
+* **GapWindowGenerator** - Apply proportional and traditional tapering
+* **DataSegmentGenerator** - Segment data and apply edge tapering for frequency analysis
 
 .. toctree::
    :maxdepth: 2

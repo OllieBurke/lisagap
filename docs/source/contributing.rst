@@ -73,7 +73,7 @@ Run the test suite to ensure your changes don't break existing functionality:
 
 .. code-block:: bash
 
-   pytest
+   uv run pytest tests/ 
 
 Submitting Changes
 ~~~~~~~~~~~~~~~~~~
@@ -101,12 +101,13 @@ Documentation improvements are always welcome! You can:
 * Improve API documentation
 * Translate documentation (future feature)
 
-To build documentation locally:
+To build documentation locally if using `uv`:
 
 .. code-block:: bash
 
    cd docs
-   make html
+   uv run make clean
+   uv run make html
 
 Questions?
 ----------
