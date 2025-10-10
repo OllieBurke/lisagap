@@ -117,21 +117,22 @@ class TestGapWindowGenerator:
     def test_generate_mask_with_tapering(self, gap_mask_generator):
         """Test mask generation with tapering."""
         gap_gen = GapWindowGenerator(gap_mask_generator)
-        
+
         taper_defs = {
             "planned": {
                 "test_gap": {"lobe_lengths_hr": 0.5}
             }
         }
-        
+
         # Generate mask with tapering
-        mask = gap_gen.generate_window(
+        mask, stats = gap_gen.generate_window(
             apply_tapering=True,
             taper_definitions=taper_defs
         )
-        
+
         assert mask is not None
         assert len(mask) == len(gap_mask_generator.sim_t)
+        assert stats is None  # No merging, so stats should be None
 
     def test_generate_mask_tapering_error(self, gap_mask_generator):
         """Test that proper error is raised when tapering requested without definitions."""
@@ -252,6 +253,57 @@ class TestGapWindowGenerator:
         n_intermediate2 = np.sum((tapered2 > 0) & (tapered2 < 1))
         
         assert n_intermediate2 > n_intermediate1, "Higher taper fraction should create more intermediate values"
+
+    def test_gap_merging_basic(self, gap_mask_generator):
+        """Test basic gap merging functionality."""
+        gap_gen = GapWindowGenerator(gap_mask_generator)
+
+        # Generate mask without merging
+        mask_no_merge, stats_no_merge = gap_gen.generate_window(
+            merge_close_gaps=False
+        )
+
+        assert stats_no_merge is None
+
+        # Generate mask with merging
+        mask_merged, stats_merged = gap_gen.generate_window(
+            merge_close_gaps=True,
+            min_freq_resolution_hz=1/(3600)  # 1 hour minimum segments
+        )
+
+        assert stats_merged is not None
+        assert 'segments_merged' in stats_merged
+        assert 'original_duty_cycle' in stats_merged
+        assert 'merged_duty_cycle' in stats_merged
+        assert 'additional_data_lost_hr' in stats_merged
+        assert 'min_segment_duration_hr' in stats_merged
+
+        # Merged mask should have equal or fewer valid samples
+        valid_no_merge = np.sum(mask_no_merge != 0)
+        valid_merged = np.sum(mask_merged != 0)
+        assert valid_merged <= valid_no_merge
+
+    def test_gap_merging_with_tapering(self, gap_mask_generator):
+        """Test gap merging combined with tapering."""
+        gap_gen = GapWindowGenerator(gap_mask_generator)
+
+        taper_defs = {
+            "planned": {
+                "test_gap": {"lobe_lengths_hr": 0.5}
+            }
+        }
+
+        # Generate mask with both merging and tapering
+        mask, stats = gap_gen.generate_window(
+            merge_close_gaps=True,
+            apply_tapering=True,
+            taper_definitions=taper_defs,
+            min_freq_resolution_hz=1/(2*3600)  # 2 hour minimum
+        )
+
+        assert mask is not None
+        assert stats is not None
+        assert len(mask) == len(gap_mask_generator.sim_t)
 
 
 @pytest.mark.skipif(not DEPENDENCIES_AVAILABLE, reason="Required dependencies not available")

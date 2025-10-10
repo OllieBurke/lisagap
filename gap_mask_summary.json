@@ -1,0 +1,85 @@
+{
+    "simulation": {
+        "dt": 5.0,
+        "n_data": 12622771,
+        "duration_sec": 63113855.0,
+        "duration_days": 730.4844328703704
+    },
+    "seeds": {
+        "planned": 2618240388,
+        "unplanned": 3387490715
+    },
+    "planned_gaps": {
+        "PAAM": {
+            "rate_events_per_year": 1095,
+            "duration_hr": 0.02777777777777778,
+            "rate_events_per_sec": 3.469919807775228e-05,
+            "duration_sec": 100.0,
+            "duration_samples": 20
+        },
+        "TM stray potential": {
+            "rate_events_per_year": 2,
+            "duration_hr": 24,
+            "rate_events_per_sec": 6.33775307356206e-08,
+            "duration_sec": 86400,
+            "duration_samples": 17280
+        },
+        "TTL calibration": {
+            "rate_events_per_year": 4,
+            "duration_hr": 48,
+            "rate_events_per_sec": 1.267550614712412e-07,
+            "duration_sec": 172800,
+            "duration_samples": 34560
+        },
+        "Antenna Repointing": {
+            "rate_events_per_year": 26,
+            "duration_hr": 3.3,
+            "rate_events_per_sec": 8.239078995630678e-07,
+            "duration_sec": 11880.0,
+            "duration_samples": 2376
+        }
+    },
+    "unplanned_gaps": {
+        "platform safe mode": {
+            "rate_events_per_year": 3,
+            "duration_hr": 60,
+            "rate_events_per_sec": 9.50662961034309e-08,
+            "duration_sec": 216000,
+            "duration_samples": 43200
+        },
+        "payload safe mode": {
+            "rate_events_per_year": 4,
+            "duration_hr": 66,
+            "rate_events_per_sec": 1.267550614712412e-07,
+            "duration_sec": 237600,
+            "duration_samples": 47520
+        },
+        "QPD loss micrometeoroid": {
+            "rate_events_per_year": 5,
+            "duration_hr": 24,
+            "rate_events_per_sec": 1.584438268390515e-07,
+            "duration_sec": 86400,
+            "duration_samples": 17280
+        },
+        "HR GRS loss micrometeoroid": {
+            "rate_events_per_year": 30,
+            "duration_hr": 24,
+            "rate_events_per_sec": 9.50662961034309e-07,
+            "duration_sec": 86400,
+            "duration_samples": 17280
+        },
+        "WR GRS loss micrometeoroid": {
+            "rate_events_per_year": 6,
+            "duration_hr": 24,
+            "rate_events_per_sec": 1.901325922068618e-07,
+            "duration_sec": 86400,
+            "duration_samples": 17280
+        }
+    },
+    "mask_analysis": {
+        "duty_cycle_percent": 82.6122,
+        "total_gap_samples": 2194826,
+        "total_gap_hours": 3048.37,
+        "number_of_gap_segments": 1939
+    }
+}

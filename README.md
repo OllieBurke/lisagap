@@ -32,6 +32,12 @@ cd lisa-gap
 uv sync
 ```
 
+You may find that you get errors due to the Git LFS. If you do not wish to download large files, use this. This is fine if you only intend to use `lisagap` as a masking (and tapering) code
+
+```bash
+	GIT_LFS_SKIP_SMUDGE=1 uv pip install -e .
+```
+
 To use the package:
 ```bash
 uv run python your_script.py

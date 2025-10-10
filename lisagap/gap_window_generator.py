@@ -70,13 +70,15 @@ class GapWindowGenerator:
         include_unplanned: bool = True,
         apply_tapering: bool = False,
         taper_definitions: Optional[Dict[str, Dict[str, Dict[str, Any]]]] = None,
-    ) -> NDArray:
+        merge_close_gaps: bool = False,
+        min_freq_resolution_hz: float = 1/(3*3600),
+    ) -> tuple[NDArray, Optional[Dict[str, Any]]]:
         """
-        Generate gap mask with optional tapering.
-        
+        Generate gap mask with optional tapering and gap merging.
+
         This method combines gap generation from the underlying GapMaskGenerator
-        with optional smooth tapering to create production-ready masks.
-        
+        with optional smooth tapering and gap merging to create production-ready masks.
+
         Parameters
         ----------
         include_planned : bool, optional
@@ -96,29 +98,45 @@ class GapWindowGenerator:
                     "gap_name": {"lobe_lengths_hr": float}
                 }
             }
-            
+        merge_close_gaps : bool, optional
+            If True, merge gaps that are close together to avoid short segments with
+            poor frequency resolution. Default is False.
+        min_freq_resolution_hz : float, optional
+            Minimum frequency resolution for data segments. Segments shorter than
+            1/min_freq_resolution_hz will be merged with adjacent gaps.
+            Default is 1/(3*3600) Hz ≈ 9.26e-5 Hz (3 hour minimum segments).
+
         Returns
         -------
-        np.ndarray
+        mask : np.ndarray
             Gap mask with 1.0 for good data and 0.0/NaN for gaps.
             If tapering is applied, values between 0 and 1 indicate
             the tapering transition regions.
-            
+        merge_stats : dict or None
+            Dictionary containing merge statistics if merge_close_gaps=True, else None.
+            Contains: 'segments_merged', 'original_duty_cycle', 'merged_duty_cycle',
+            'additional_data_lost_hr'.
+
         Examples
         --------
         >>> # Basic mask generation
-        >>> mask = window.generate_mask()
-        >>> 
-        >>> # Only planned gaps
-        >>> planned_mask = window.generate_mask(include_unplanned=False)
-        >>> 
-        >>> # With tapering
+        >>> mask, stats = window.generate_window()
+        >>>
+        >>> # With gap merging
+        >>> mask, stats = window.generate_window(
+        ...     merge_close_gaps=True,
+        ...     min_freq_resolution_hz=1/(2*3600)  # 2 hour minimum segments
+        ... )
+        >>> print(f"Merged {stats['segments_merged']} segments")
+        >>>
+        >>> # With tapering and merging
         >>> taper_defs = {
         ...     "planned": {"maintenance": {"lobe_lengths_hr": 2.0}}
         ... }
-        >>> tapered_mask = window.generate_mask(
-        ...     apply_tapering=True, 
-        ...     taper_definitions=taper_defs
+        >>> mask, stats = window.generate_window(
+        ...     apply_tapering=True,
+        ...     taper_definitions=taper_defs,
+        ...     merge_close_gaps=True
         ... )
         """
         # Generate the base mask using the underlying GapMaskGenerator
@@ -126,7 +144,17 @@ class GapWindowGenerator:
             include_planned=include_planned,
             include_unplanned=include_unplanned
         )
-        
+
+        # Initialize merge statistics
+        merge_stats = None
+
+        # Apply gap merging if requested
+        if merge_close_gaps:
+            mask, merge_stats = self._merge_close_gaps(
+                mask,
+                min_freq_resolution_hz
+            )
+
         # Apply tapering if requested
         if apply_tapering:
             if taper_definitions is None:
@@ -134,9 +162,95 @@ class GapWindowGenerator:
                     "taper_definitions must be provided when apply_tapering=True"
                 )
             mask = self.apply_smooth_taper_to_mask(mask, taper_definitions)
-        
-        return mask
-    
+
+        return mask, merge_stats
+
+    def _merge_close_gaps(
+        self,
+        mask: NDArray,
+        min_freq_resolution_hz: float,
+    ) -> tuple[NDArray, Dict[str, Any]]:
+        """
+        Merge gaps that are too close together to avoid short segments.
+
+        This method identifies continuous data segments that are shorter than
+        the minimum duration required for the target frequency resolution, and
+        converts them to gaps (zeros those segments).
+
+        Parameters
+        ----------
+        mask : np.ndarray
+            Binary mask (1 = good data, 0/NaN = gap).
+        min_freq_resolution_hz : float
+            Minimum frequency resolution. Segments shorter than 1/min_freq_resolution_hz
+            will be converted to gaps.
+
+        Returns
+        -------
+        merged_mask : np.ndarray
+            Mask with short segments converted to gaps.
+        stats : dict
+            Statistics about the merging operation.
+        """
+        # Calculate minimum segment duration in samples
+        min_segment_duration_sec = 1.0 / min_freq_resolution_hz
+        min_segment_samples = int(min_segment_duration_sec / self.dt)
+
+        # Work with a copy
+        merged_mask = mask.copy().astype(float)
+
+        # Calculate original duty cycle
+        original_valid = np.sum(mask != 0) if not self.treat_as_nan else np.sum(~np.isnan(mask))
+        original_duty_cycle = original_valid / len(mask)
+
+        # Identify continuous data segments (non-gap regions)
+        gap_value = 0.0 if not self.treat_as_nan else np.nan
+
+        if self.treat_as_nan:
+            gap_mask = np.isnan(mask)
+        else:
+            gap_mask = (mask == gap_value)
+
+        # Find continuous data segments (where gap_mask is False)
+        data_mask = ~gap_mask
+        data_diff = np.diff(np.concatenate(([False], data_mask, [False])).astype(int))
+        segment_starts = np.where(data_diff == 1)[0]
+        segment_ends = np.where(data_diff == -1)[0]
+
+        # Track segments that will be merged
+        segments_merged = 0
+
+        # Iterate through all segments and zero out short ones
+        for start, end in zip(segment_starts, segment_ends):
+            segment_length = end - start
+
+            if segment_length < min_segment_samples:
+                # This segment is too short - convert it to a gap
+                if self.treat_as_nan:
+                    merged_mask[start:end] = np.nan
+                else:
+                    merged_mask[start:end] = 0.0
+                segments_merged += 1
+
+        # Calculate merged duty cycle
+        merged_valid = np.sum(merged_mask != 0) if not self.treat_as_nan else np.sum(~np.isnan(merged_mask))
+        merged_duty_cycle = merged_valid / len(merged_mask)
+
+        # Calculate additional data lost
+        additional_data_lost_samples = original_valid - merged_valid
+        additional_data_lost_hr = (additional_data_lost_samples * self.dt) / 3600.0
+
+        # Build statistics dictionary
+        stats = {
+            'segments_merged': segments_merged,
+            'original_duty_cycle': float(original_duty_cycle),
+            'merged_duty_cycle': float(merged_duty_cycle),
+            'additional_data_lost_hr': float(additional_data_lost_hr),
+            'min_segment_duration_hr': min_segment_duration_sec / 3600.0,
+        }
+
+        return merged_mask, stats
+
     def apply_smooth_taper_to_mask(
         self,
         mask: NDArray,
