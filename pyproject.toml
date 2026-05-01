@@ -78,7 +78,7 @@ disallow_untyped_defs = true
 
 [tool.uv.sources]
 #lisaglitch = { git = "https://gitlab.in2p3.fr/lisa-simulation/glitch.git", branch = "69-incorporate-gaps" }
-#lisaglitch = { git = "https://gitlab.in2p3.fr/lisa-simulation/glitch.git"}
+lisaglitch = { git = "https://gitlab.in2p3.fr/lisa-simulation/glitch.git"}
 
 [dependency-groups]
 dev = [

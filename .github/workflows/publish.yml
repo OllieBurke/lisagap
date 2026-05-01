@@ -9,6 +9,9 @@ permissions:
   contents: read
   id-token: write  # Required for Trusted Publishing (OIDC)
 
+env:
+  GIT_LFS_SKIP_SMUDGE: 1
+
 jobs:
   build:
     runs-on: ubuntu-latest
