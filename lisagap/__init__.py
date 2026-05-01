@@ -1,5 +1,5 @@
-from .gap_window_generator import GapWindowGenerator
 from .gap_segment_generator import DataSegmentGenerator
+from .gap_window_generator import GapWindowGenerator
 
 # Import GapMaskGenerator from lisaglitch
 try:

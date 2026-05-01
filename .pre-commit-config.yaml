@@ -1,0 +1,48 @@
+repos:
+  - repo: local
+    hooks:
+      - id: pytest
+        name: run tests
+        entry: uv run pytest tests/ -q --tb=short
+        language: system
+        pass_filenames: false
+        always_run: true
+  - repo: https://github.com/srstevenson/nb-clean
+    rev: 4.0.1
+    hooks:
+      - id: nb-clean
+        name: clean notebooks
+        args: [--remove-empty-cells, --remove-all-notebook-metadata]
+        exclude: ^docs/
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-added-large-files
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/hadialqattan/pycln
+    rev: v2.5.0
+    hooks:
+      - id: pycln
+        name: remove unused imports
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: organize imports
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 24.10.0
+    hooks:
+      - id: black-jupyter
+        name: black
+        language_version: python3
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.9.9
+    hooks:
+      - id: uv-lock
+        name: check uv lockfile is up to date
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.23
+    hooks:
+      - id: validate-pyproject
+        name: validate pyproject.toml

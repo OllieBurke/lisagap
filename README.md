@@ -95,7 +95,7 @@ uv run pytest
 
 **Traditional:**
 ```bash
-pytest 
+pytest
 
 ## Quick Start
 
@@ -210,7 +210,7 @@ Full documentation is available at [Read the Docs](https://lisagap.readthedocs.i
 See the included **`docs/source/gap_notebook.ipynb`** for a comprehensive tutorial that covers:
 
 - Setting up realistic gap configurations for LISA
-- Generating gap masks with planned and unplanned gaps  
+- Generating gap masks with planned and unplanned gaps
 - Saving and loading gap configurations to/from HDF5 files. Gap metadata can be saved to .json files
 - **Customizable smooth tapering** for frequency domain analysis
 - **Proportional tapering** with automatic gap categorization
@@ -236,7 +236,7 @@ segmenter = DataSegmentGenerator(mask=gap_mask, data=your_data, dt=dt)
 segments = segmenter.get_time_segments(
     apply_window=True,
     left_edge_taper=1000,   # Smooth left edge of first segment
-    right_edge_taper=1500   # Smooth right edge of last segment  
+    right_edge_taper=1500   # Smooth right edge of last segment
 )
 
 # Analyze frequency content
@@ -297,7 +297,7 @@ taper_definitions = {
 
 # Apply smooth Tukey window tapering
 smoothed_mask = window.apply_smooth_taper_to_mask(
-    gap_mask, 
+    gap_mask,
     taper_definitions
 )
 ```
@@ -326,7 +326,7 @@ This flexibility allows users to optimize tapering strategies for different gap 
 - scipy
 - h5py
 - lisaglitch
-- lisaconstants 
+- lisaconstants
 
 ## License
 
@@ -352,4 +352,4 @@ Contributions are welcome! Please see our [Contributing Guide](https://lisagap.r
 
 ## Support
 
-This gap generation tool is suitable for LISA data processing pipelines including L01, SIM, L2D, and L2A data products. 
+This gap generation tool is suitable for LISA data processing pipelines including L01, SIM, L2D, and L2A data products.

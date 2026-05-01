@@ -1,7 +1,7 @@
 Tutorial
 ========
 
-This tutorial demonstrates the key functionality of lisa-gap, focusing on the new proportional tapering 
+This tutorial demonstrates the key functionality of lisa-gap, focusing on the new proportional tapering
 capabilities built on top of lisaglitch.
 
 Quick Start Example
@@ -36,7 +36,7 @@ Basic gap mask generation:
 
    # Create gap mask generator
    gap_gen = GapMaskGenerator(sim_t, gap_definitions)
-   
+
    # Generate binary mask
    mask = gap_gen.generate_mask(include_unplanned=True, include_planned=True)
 
@@ -50,13 +50,13 @@ Apply smart tapering based on gap duration:
    # Convert to quality flags and create mask
    quality_flags = gap_gen.build_quality_flags(mask)
    gap_mask = GapMaskGenerator.quality_flags_to_mask(quality_flags)
-   
+
    # Apply proportional tapering
    tapered_mask = GapWindowGenerator.apply_proportional_tapering(
        gap_mask,
        dt=dt,
        short_taper_fraction=0.25,   # 25% each side for short gaps
-       medium_taper_fraction=0.05,  # 5% each side for medium gaps  
+       medium_taper_fraction=0.05,  # 5% each side for medium gaps
        long_taper_fraction=0.02,    # 2% each side for long gaps
        short_gap_threshold_minutes=30,  # <30 min = short
        long_gap_threshold_hours=2       # >2 hours = long
@@ -87,18 +87,18 @@ Split data into continuous segments for independent analysis:
 .. code-block:: python
 
    from lisagap import DataSegmentGenerator
-   
+
    # Create sample data with gaps
    sample_data = np.sin(2 * np.pi * 0.01 * sim_t) + 0.1 * np.random.randn(len(sim_t))
-   
+
    # Create segmenter using tapered mask
    segmenter = DataSegmentGenerator(
        mask=tapered_mask,
-       data=sample_data, 
+       data=sample_data,
        dt=dt,
        t0=0.0
    )
-   
+
    # Get basic segmentation info
    summary = segmenter.summary()
    print(f"Found {summary['total_segments']} continuous segments")
@@ -113,10 +113,10 @@ Apply edge tapering to prevent spectral artifacts at segment boundaries:
 
    # Basic segmentation (preserves original data)
    segments = segmenter.get_time_segments(apply_window=False)
-   
+
    # Apply windowing with existing mask tapering
    windowed_segments = segmenter.get_time_segments(apply_window=True)
-   
+
    # Add edge tapering for frequency domain analysis
    edge_tapered_segments = segmenter.get_time_segments(
        apply_window=True,
@@ -127,7 +127,7 @@ Apply edge tapering to prevent spectral artifacts at segment boundaries:
 Edge tapering uses one-sided Tukey windows to create smooth ramps:
 
 * **Left edge**: Ramps from 0 to 1 over specified samples on first segment only
-* **Right edge**: Ramps from 1 to 0 over specified samples on last segment only  
+* **Right edge**: Ramps from 1 to 0 over specified samples on last segment only
 * **Middle segments**: Unaffected by edge tapering
 * **Prevents spectral leakage**: Essential for clean frequency domain analysis
 
@@ -140,16 +140,16 @@ Analyze segments in frequency domain with proper windowing:
 
    # Get frequency information for all segments
    freq_info = segmenter.get_freq_info_from_segments()
-   
+
    # Plot power spectra
    import matplotlib.pyplot as plt
-   
+
    plt.figure(figsize=(12, 6))
    for seg_name, seg_freq in freq_info.items():
        psd = np.abs(seg_freq['fft'])**2
-       plt.loglog(seg_freq['frequencies'][1:], psd[1:], 
+       plt.loglog(seg_freq['frequencies'][1:], psd[1:],
                   label=seg_name, alpha=0.8)
-   
+
    plt.xlabel('Frequency (Hz)')
    plt.ylabel('Power Spectral Density')
    plt.legend()
@@ -174,9 +174,9 @@ This creates much longer, more gradual transitions extending beyond gap boundari
 
    # Create gap mask generator
    gap_gen = GapMaskGenerator(
-       sim_t, 
-       dt, 
-       gap_definitions, 
+       sim_t,
+       dt,
+       gap_definitions,
        treat_as_nan=False, # Treat as gating function (zeros for gap segment)
        use_gpu=False  # Set to True for GPU acceleration
    )
@@ -190,7 +190,7 @@ For specific gap types, use traditional lobe-length tapering:
 
    # Wrap with windowing capabilities
    window_gen = GapWindowGenerator(gap_gen)
-   
+
    # Define custom tapering per gap type
    taper_definitions = {
        "planned": {
@@ -206,7 +206,7 @@ For specific gap types, use traditional lobe-length tapering:
    # Apply smooth tapering
    smoothed_mask = window_gen.generate_window(
        include_planned=True,
-       include_unplanned=True, 
+       include_unplanned=True,
        apply_tapering=True,
        taper_definitions=taper_definitions
    )
@@ -241,7 +241,7 @@ Key Advantages
 **Proportional Tapering Benefits:**
 
 * **Automatic categorization** - Short, medium, long gaps handled differently
-* **Proportional to gap duration** - Larger gaps get more tapering  
+* **Proportional to gap duration** - Larger gaps get more tapering
 * **Configurable thresholds** - Customize gap categories for your use case
 * **Extended lobes** - Ultra-smooth transitions for frequency analysis
 
@@ -262,7 +262,7 @@ Key Advantages
 **Compared to traditional windowing:**
 
 * **Smarter** - Adapts to gap characteristics automatically
-* **More flexible** - Works with external .npy gap masks  
+* **More flexible** - Works with external .npy gap masks
 * **Better for FFTs** - Longer, smoother transitions reduce artifacts
 * **Segmentation support** - Clean separation for independent analysis
 

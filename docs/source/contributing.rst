@@ -73,7 +73,7 @@ Run the test suite to ensure your changes don't break existing functionality:
 
 .. code-block:: bash
 
-   uv run pytest tests/ 
+   uv run pytest tests/
 
 Submitting Changes
 ~~~~~~~~~~~~~~~~~~
@@ -119,4 +119,4 @@ If you have questions about contributing, feel free to:
 * Start a discussion on GitHub
 * email Ollie Burke directly -- ollie.burke@glasgow.ac.uk
 
-Happy coding! 
+Happy coding!

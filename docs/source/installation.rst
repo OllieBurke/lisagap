@@ -6,7 +6,7 @@ Requirements
 
 * Python >= 3.10
 * numpy
-* scipy  
+* scipy
 * h5py
 * lisaglitch
 * lisaconstants
@@ -55,6 +55,6 @@ Test your installation:
    import lisagap
    from lisaglitch import GapMaskGenerator
    from lisagap import GapWindowGenerator
-   
+
    print("lisa-gap successfully installed!")
    print(f"Version: {lisagap.__version__}")

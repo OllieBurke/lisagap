@@ -3,22 +3,22 @@ lisa-gap Documentation
 
 **lisa-gap** is a Python package for simulating planned and unplanned data gaps in LISA time series data.
 
-The package provides tools for generating realistic gap masks that can be applied to LISA time series data. 
-It supports both planned gaps (e.g., scheduled maintenance) and unplanned gaps (e.g., hardware failures) 
+The package provides tools for generating realistic gap masks that can be applied to LISA time series data.
+It supports both planned gaps (e.g., scheduled maintenance) and unplanned gaps (e.g., hardware failures)
 with configurable statistical distributions.
 
-Built on top of `lisaglitch <https://github.com/LISA-Consortium/lisaglitch>`_, lisa-gap adds advanced 
+Built on top of `lisaglitch <https://github.com/LISA-Consortium/lisaglitch>`_, lisa-gap adds advanced
 windowing, proportional tapering, and data segmentation capabilities for frequency domain analysis.
 
 .. note::
-   Original code developed by Eleonora Castelli (NASA Goddard) and adapted, packaged and enhanced 
+   Original code developed by Eleonora Castelli (NASA Goddard) and adapted, packaged and enhanced
    by Ollie Burke (University of Glasgow).
 
 Features
 --------
 
 * Generate realistic gap patterns for LISA time series
-* Support for both planned and unplanned gaps  
+* Support for both planned and unplanned gaps
 * Configurable gap rates and durations
 * **Proportional tapering** with automatic gap categorization
 * **Extended lobe tapering** for ultra-smooth transitions
