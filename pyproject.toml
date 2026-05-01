@@ -27,7 +27,7 @@ dependencies = [
     "scipy",
     "h5py",
     "lisaconstants",
-    "lisaglitch",
+    "lisaglitch>=2.0.0",
 ]
 
 
@@ -76,9 +76,6 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 
-[tool.uv.sources]
-#lisaglitch = { git = "https://gitlab.in2p3.fr/lisa-simulation/glitch.git", branch = "69-incorporate-gaps" }
-lisaglitch = { git = "https://gitlab.in2p3.fr/lisa-simulation/glitch.git"}
 
 [dependency-groups]
 dev = [

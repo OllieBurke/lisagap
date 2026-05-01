@@ -10,6 +10,9 @@ permissions:
   pages: write
   id-token: write
 
+env:
+  GIT_LFS_SKIP_SMUDGE: 1
+
 concurrency:
   group: "pages"
   cancel-in-progress: false
