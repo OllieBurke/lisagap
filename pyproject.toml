@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lisa-gap"
-version = "0.4.1"
+version = "0.4.2"
 description = "A tool for simulating planned and unplanned data gaps in LISA time series"
 authors = [
     {name = "Ollie Burke", email = "ollie.burke@glasgow.ac.uk"}
@@ -47,7 +47,7 @@ dev = [
 [project.urls]
 Homepage = "https://github.com/ollieburke/lisagap"
 Repository = "https://github.com/ollieburke/lisagap"
-Documentation = "https://lisagap.readthedocs.io"
+Documentation = "https://ollieburke.github.io/lisagap"
 Issues = "https://github.com/ollieburke/lisagap/issues"
 
 [tool.setuptools.packages.find]

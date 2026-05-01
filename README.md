@@ -57,12 +57,7 @@ Then install the package:
 pip install lisa-gap
 ```
 
-Available on [Test PyPI](https://test.pypi.org/project/lisa-gap/):
-```bash
-pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple lisa-gap==0.4.0
-```
-
-### From source (traditional method)
+### Or from source (traditional method)
 
 ```bash
 git clone https://github.com/ollieburke/lisa-gap.git
@@ -84,6 +79,14 @@ uv sync --extra dev --extra docs
 git clone https://github.com/ollieburke/lisa-gap.git
 cd lisa-gap
 pip install -e ".[dev, docs]"
+```
+
+**Pre-commit hooks**
+
+For development purposes, we recommend installing the pre-commit hooks to ensure code quality and consistency:
+
+```bash
+uv run pre-commit run --all-files
 ```
 
 ### Verify installation with tests
@@ -203,7 +206,7 @@ data_w_gaps = data * gap_mask
 
 ## Documentation
 
-Full documentation is available at [Read the Docs](https://lisagap.readthedocs.io/).
+Full documentation is available at [GitHub Pages](https://ollieburke.github.io/lisagap).
 
 ### Tutorial Notebook
 
@@ -348,7 +351,7 @@ If you use this package in your research, please cite:
 
 ## Contributing
 
-Contributions are welcome! Please see our [Contributing Guide](https://lisagap.readthedocs.io/en/latest/contributing.html) for detailed information on how to contribute to the project.
+Contributions are welcome! Please see our [Contributing Guide](https://ollieburke.github.io/lisagap/contributing.html) for detailed information on how to contribute to the project.
 
 ## Support
 

@@ -20,7 +20,7 @@ This directory contains the Sphinx documentation for lisa-gap.
 
 ## Read the Docs
 
-The documentation is automatically built and hosted on Read the Docs when changes are pushed to the repository.
+The documentation is automatically built and hosted on Github Pages when changes are pushed to the repository.
 
 ## Structure
 
