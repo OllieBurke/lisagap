@@ -10,9 +10,8 @@ except ImportError:
         "Please install it with: pip install lisaglitch"
     )
 
-from importlib.metadata import version
+from .__version__ import __version__
 
-__version__ = version("lisa-gap")
 __author__ = "Ollie Burke -- ollie.burke@glasgow.ac.uk"
 __all__ = ["GapWindowGenerator", "DataSegmentGenerator", "GapMaskGenerator"]
 
