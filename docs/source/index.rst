@@ -1,6 +1,10 @@
 lisa-gap Documentation
 ======================
 
+.. image:: https://zenodo.org/badge/1015328974.svg
+   :target: https://doi.org/10.5281/zenodo.19964110
+   :alt: DOI
+
 **lisa-gap** is a Python package for simulating planned and unplanned data gaps in LISA time series data.
 
 The package provides tools for generating realistic gap masks that can be applied to LISA time series data.

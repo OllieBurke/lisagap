@@ -3,6 +3,11 @@ Citation
 
 If you use lisa-gap in your research, we kindly ask that you cite it in your publications.
 
+APA
+---
+
+Burke, O., & Castelli, E. (2026). lisa-gap: A tool for simulating planned and unplanned data gaps in LISA time series (v0.4.5). Zenodo. https://doi.org/10.5281/zenodo.19964110
+
 BibTeX Entry
 ------------
 
@@ -10,10 +15,11 @@ BibTeX Entry
 
    @software{lisagap,
      author = {Burke, Ollie and Castelli, Eleonora},
-     title = {lisa-gap: A tool for simulating data gaps in LISA time series},
-     url = {https://github.com/ollieburke/lisa-gap},
-     version = {0.4.0},
-     year = {2025}
+     title = {lisa-gap: A tool for simulating planned and unplanned data gaps in LISA time series},
+     url = {https://github.com/ollieburke/lisagap},
+     doi = {10.5281/zenodo.19964110},
+     version = {0.4.5},
+     year = {2026}
    }
 
   @software{bayle_2022_6452904,
