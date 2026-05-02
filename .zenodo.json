@@ -1,0 +1,26 @@
+{
+  "title": "lisa-gap: A tool for simulating planned and unplanned data gaps in LISA time series",
+  "description": "A Python package for simulating planned and unplanned data gaps in LISA time series data. Provides tools for generating realistic gap masks with smooth tapering using Tukey windows, data segmentation, proportional tapering for frequency domain analysis, and edge boundary management to prevent spectral artifacts.",
+  "creators": [
+    {
+      "name": "Burke, Ollie",
+      "affiliation": "University of Glasgow",
+      "orcid": "0000-0003-2393-209X"
+    },
+    {
+      "name": "Castelli, Eleanora",
+      "affiliation": "NASA Goddard Space Flight Center",
+      "orcid": "0000-0002-4429-0682"
+    }
+  ],
+  "keywords": [
+    "lisa",
+    "gravitational-waves",
+    "data-gaps",
+    "time-series",
+    "space-based gravitational wave detector"
+  ],
+  "license": "MIT",
+  "upload_type": "software",
+  "access_right": "open"
+}
