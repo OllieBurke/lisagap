@@ -1,5 +1,8 @@
 # lisa-gap
 
+[![DOI](https://zenodo.org/badge/1015328974.svg)](https://doi.org/10.5281/zenodo.19964110)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://ollieburke.github.io/lisagap)
+
 A Python package for simulating planned and unplanned data gaps in LISA time series data. Our package is currently available on test.pypi [here](https://test.pypi.org/project/lisa-gap/).
 
 The work here builds off the work in the `lisaglitch` package, which provides core functionality for generating gap masks. `lisa-gap` extends this functionality with advanced features such as customizable smooth tapering around gap edges using Tukey windows, data segmentation with edge tapering, and proportional tapering for frequency domain analysis.
@@ -339,13 +342,16 @@ MIT License
 
 If you use this package in your research, please cite:
 
+Burke, O., & Castelli, E. (2026). lisa-gap: A tool for simulating planned and unplanned data gaps in LISA time series (v0.4.5). Zenodo. https://doi.org/10.5281/zenodo.19964110
+
 ```bibtex
 @software{lisagap,
   author = {Burke, Ollie and Castelli, Eleonora},
-  title = {lisa-gap: A tool for simulating data gaps in LISA time series},
-  url = {https://github.com/ollieburke/lisa-gap},
-  version = {0.1.0},
-  year = {2025}
+  title = {lisa-gap: A tool for simulating planned and unplanned data gaps in LISA time series},
+  url = {https://github.com/ollieburke/lisagap},
+  doi = {10.5281/zenodo.19964110},
+  version = {0.4.5},
+  year = {2026}
 }
 ```
 
